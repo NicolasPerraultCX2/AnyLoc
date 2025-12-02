@@ -62,6 +62,8 @@ class LocalArgs:
     domain: Literal["aerial", "indoor", "urban"] = "urban"
     # Number of clusters (cluster centers for VLAD) - read from cache
     num_c: int = 32
+    # Device to use for computation (cuda or cpu)
+    device: str = "cuda"
 
 
 # %%
@@ -111,13 +113,13 @@ def main(largs: LocalArgs):
     
     # Program parameters
     save_dir = _ex(largs.out_dir)
-    device = torch.device("cuda")
+    device = torch.device(largs.device)
     # Dino_v2 properties (parameters)
     desc_layer: int = 31
     desc_facet: Literal["query", "key", "value", "token"] = "value"
     num_c: int = largs.num_c
     # Domain for use case (deployment environment)
-    domain: largs.domain
+    domain = largs.domain
     # Maximum image dimension
     max_img_size: int = largs.max_img_size
     # Ensure inputs are fine
@@ -184,6 +186,7 @@ def main(largs: LocalArgs):
         # VLAD global descriptor
         gd = vlad.generate(ret.cpu().squeeze()) # VLAD:  [agg_dim]
         gd_np = gd.numpy()[np.newaxis, ...] # shape: [1, agg_dim]
+        print(f"Generated global descriptor for {img_fname}")
         np.save(f"{save_dir}/{os.path.basename(img_fname)}.npy",
                 gd_np)
 
