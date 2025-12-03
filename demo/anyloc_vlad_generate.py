@@ -155,7 +155,7 @@ def main(largs: LocalArgs):
     # Global descriptor generation
     imgs_dir = _ex(largs.in_dir)
     assert os.path.isdir(imgs_dir), "Input directory doesn't exist!"
-    img_fnames = glob.glob(f"{imgs_dir}/*.jpg")
+    img_fnames = glob.glob(f"{imgs_dir}/*.{largs.imgs_ext}")
     img_fnames = natsort.natsorted(img_fnames)
     if largs.first_n is not None:
         img_fnames = img_fnames[:largs.first_n]
